@@ -1,0 +1,12 @@
+Andrei Rares Patrut - 5934273
+Project contribution - 50%
+1. Localization part(50%) - implemented color segmentation method, plate coordinates getter and validity check for them and plate rotation.
+2. Recognition part(40%) - implemented the evaluation for Recognition, character recognition using XOR method and final license plate string construction
+3. Capture Frame process(60%) - implemented the input video frame by frame split and plate localization and recognition in each one of them, the similar plates grouping
+			   and majority voting along with Dutch validity check to decide which is the final output for the given plate.
+
+David Maasdam - 5701961
+Project contribution - 50%
+1. Localization part(50%) - Implemented evaluation for localization: formatting rectangle coordinates from our ground truth, calculating intersection over union, calculating final score.
+2. Recognition part(60%) - Implemented character segmentation: preprocessing the cropped input plate, implementing flood-fill, finding the characters that make up the image.
+3. Capture Frame process(40%) - Implemented optimizations: profiled the pipeline, optimized methods in Recognize.py with numpy operations instead of for loops.

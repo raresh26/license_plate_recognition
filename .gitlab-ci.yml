@@ -1,0 +1,35 @@
+image: "jjanzic/docker-python3-opencv"
+
+stages:
+  - run
+  - evaluate
+
+# Global setup steps that run before each stage
+before_script:
+  - python -m venv venv
+  - source venv/bin/activate
+  - apt-get update && apt-get install libgl1 -y   # For opencv
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+  - echo "Environment setup complete!"
+
+run_main:
+  stage: run
+  script:
+    - echo "Running main!"
+    - input_file="./dataset/pipeline/shorterVideo.avi"    # TODO: Comment out this line if you want to run the pipeline on longer video and
+    # - input_file="./dataset/trainingvideo.avi"          # TODO: Uncomment this line to run on full training video (NOTE: Only uncomment this line when you really want to test final video, this significantly slows down pipeline)
+    - python3 main.py --file_path $input_file --output_path ./Output.csv
+  artifacts:
+    paths:
+      - Output.csv
+
+test_percentage:
+  stage: evaluate
+  script:
+    - test_output=$(python3 evaluation.py --file_path ./Output.csv --ground_truth_path ./dataset/groundTruth.csv | grep -e "Score of Category I & II" | cut -c30-)
+    - if [ -n "$test_output" ] && (( $(echo "$test_output" | awk '{if ($1 < 0.4) print 1; else print 0}') )); then echo "Test score is less than 0.4"; exit 1; fi    
+    # TODO: change the 0.4 (from if ($1 < 0.4)) to whatever your "minimum acceptable accuracy" is for where you are in the project, this line causes a Warning if your accuracy is below 0.4
+  dependencies:
+    - run_main
+  allow_failure: true
